@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Генератор QR — Зелёный Биом</title>
+<style>
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f5f5f0;
+    color: #1a2e1a;
+    margin: 0;
+    padding: 24px 16px;
+    line-height: 1.5;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 6px; color: #2d5a2d; }
+  .sub { color: #5a6b5a; font-size: 14px; margin: 0 0 24px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .item {
+    background: #fff;
+    border: 2px solid #d4e6d4;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .item .code {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d7a2d;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    word-break: break-all;
+  }
+  .item .desc {
+    font-size: 12px;
+    color: #5a6b5a;
+    margin-bottom: 12px;
+    min-height: 32px;
+  }
+  .qr-box {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-box img { max-width: 100%; max-height: 100%; }
+  @media print {
+    body { padding: 0; background: #fff; }
+    .item { box-shadow: none; }
+    button { display: none; }
+  }
+  .top-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .top-bar button {
+    background: #2d7a2d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .top-bar button:hover { background: #1e5c1e; }
+  .legend {
+    background: #fff;
+    border: 1px solid #d4e6d4;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .legend b { color: #2d7a2d; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>🔳 QR-коды для квеста</h1>
+  <p class="sub">8 кодов. Распечатай и расклей по квартире.</p>
+
+  <div class="legend">
+    <b>Куда клеить:</b><br>
+    • <code>WARDROBE</code> → в конверт в шкафу (спальня)<br>
+    • <code>BATH_DANCE</code> → на дно таза (ванная)<br>
+    • <code>KITCHEN_MUSIC</code> → на дверь кухни<br>
+    • <code>KITCHEN_RECIPE</code> → в конверт на кухонном столе<br>
+    • <code>OFFICE_MUSIC</code> → на дверь офиса<br>
+    • <code>CAT_HOUSE</code> → в конверт внутри домика кота Марса<br>
+    • <code>BOOK_SONG</code> → в конверт в книге<br>
+    • <code>FINAL</code> → в последний конверт рядом с подарком (опционально)
+  </div>
+
+  <div class="top-bar">
+    <button onclick="window.print()">🖨 Распечатать всё</button>
+    <button onclick="location.reload()">🔄 Обновить</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+const CODES = [
+  { code: 'WARDROBE',       desc: 'В конверт в шкафу' },
+  { code: 'BATH_DANCE',     desc: 'На дно таза' },
+  { code: 'KITCHEN_MUSIC',  desc: 'На дверь кухни' },
+  { code: 'KITCHEN_RECIPE', desc: 'В конверт на столе (кухня)' },
+  { code: 'OFFICE_MUSIC',   desc: 'На дверь офиса' },
+  { code: 'CAT_HOUSE',      desc: 'В конверт в домике кота' },
+  { code: 'BOOK_SONG',      desc: 'В конверт в книге' },
+  { code: 'FINAL',          desc: 'В последний конверт' }
+];
+
+const grid = document.getElementById('grid');
+
+CODES.forEach(({ code, desc }) => {
+  const qr = qrcode(0, 'M');
+  qr.addData(code);
+  qr.make();
+  const img = qr.createImgTag(6, 8);
+
+  const div = document.createElement('div');
+  div.className = 'item';
+  div.innerHTML = `
+    <div class="code">${code}</div>
+    <div class="desc">${desc}</div>
+    <div class="qr-box">${img}</div>
+  `;
+  grid.appendChild(div);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f1f12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Зелёный Биом">
+<title>Зелёный Биом</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ WELCOME ============ -->
+  <section class="view active" id="view-welcome">
+    <header class="hero">
+      <div class="hero-gem"></div>
+      <h1>ЗЕЛЁНЫЙ БИОМ</h1>
+      <p class="hero-sub">квест на день рождения</p>
+    </header>
+
+    <div class="card">
+      <p><b>Доброе утро, дракончик.</b></p>
+      <p>Ты заспавнилась в новом мире.</p>
+      <p>Правила: <b>4 биома, 4 изумруда, один подарок.</b></p>
+      <p style="margin-top:14px;">Готова начать?</p>
+    </div>
+
+    <button class="btn primary big" onclick="startQuest()">
+      <span class="btn-icon">🌱</span>
+      Начать
+    </button>
+
+    <p class="footer-note">🟢 сделано с любовью · 25 октября</p>
+  </section>
+
+  <!-- ============ HOME / TRACKER ============ -->
+  <section class="view" id="view-home">
+    <header class="hero">
+      <div class="hero-gem"></div>
+      <h1>ЗЕЛЁНЫЙ БИОМ</h1>
+      <p class="hero-sub">найдено: <span id="found-count">0</span> из 4</p>
+    </header>
+
+    <div class="card">
+      <h2>📜 Текущее задание</h2>
+      <div id="current-task" class="task-text">…</div>
+    </div>
+
+    <div class="card">
+      <h2>💎 Изумруды</h2>
+      <div class="emerald-grid" id="emerald-grid"></div>
+      <p class="muted small" id="progress-hint"></p>
+    </div>
+
+    <button class="btn primary big" onclick="openScanner()">
+      <span class="btn-icon">📷</span>
+      Сканировать QR
+    </button>
+
+    <div class="btn-row">
+      <button class="btn secondary" onclick="showWish()">
+        <span class="btn-icon">🎁</span>
+        Пожелание
+      </button>
+      <button class="btn secondary" onclick="openManual()">
+        <span class="btn-icon">📋</span>
+        Список QR
+      </button>
+    </div>
+
+    <button class="btn ghost small" onclick="resetProgress()">Сбросить прогресс</button>
+
+    <p class="footer-note">🟢 иди по биомам · не торопись</p>
+  </section>
+
+  <!-- ============ SCANNER ============ -->
+  <section class="view" id="view-scanner">
+    <header class="bar">
+      <button class="icon-btn" onclick="closeScanner()">✕</button>
+      <h2>Сканер</h2>
+      <span class="spacer"></span>
+    </header>
+    <p class="muted center">Наведи камеру на QR-код</p>
+    <div id="reader"></div>
+    <button class="btn secondary" onclick="closeScanner()">Отмена</button>
+    <p class="muted small center" id="scan-error"></p>
+  </section>
+
+  <!-- ============ ACTION ============ -->
+  <section class="view" id="view-action">
+    <header class="bar">
+      <button class="icon-btn" onclick="closeAction()">✕</button>
+      <h2 id="action-title">…</h2>
+      <span class="spacer"></span>
+    </header>
+    <div id="action-body"></div>
+  </section>
+
+  <!-- ============ WISH ============ -->
+  <section class="view" id="view-wish">
+    <header class="bar">
+      <button class="icon-btn" onclick="closeWish()">✕</button>
+      <h2>🎁 Пожелание</h2>
+      <span class="spacer"></span>
+    </header>
+    <div class="wish-card" id="wish-card">
+      <p id="wish-text">…</p>
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="showWish()">Ещё</button>
+      <button class="btn secondary" onclick="closeWish()">Закрыть</button>
+    </div>
+  </section>
+
+  <!-- ============ MANUAL ============ -->
+  <section class="view" id="view-manual">
+    <header class="bar">
+      <button class="icon-btn" onclick="closeManual()">✕</button>
+      <h2>Список QR</h2>
+      <span class="spacer"></span>
+    </header>
+    <p class="muted center small">Ручной запуск (для тестирования)</p>
+    <div id="manual-list"></div>
+  </section>
+
+  <!-- ============ TOAST ============ -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

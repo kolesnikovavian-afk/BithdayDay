@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Конверты — тексты для печати</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', serif;
+    background: #f5f5f0;
+    color: #1a2e1a;
+    padding: 14px;
+    line-height: 1.5;
+  }
+  .page-title {
+    text-align: center;
+    font-size: 16px;
+    margin: 0 0 6px;
+    color: #2d7a2d;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+  }
+  .page-sub {
+    text-align: center;
+    font-size: 11px;
+    color: #5a6b5a;
+    margin: 0 0 20px;
+    font-style: italic;
+  }
+  .section-title {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    color: #2d7a2d;
+    margin: 20px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #d4e6d4;
+    letter-spacing: 1px;
+  }
+  .env {
+    border: 2px dashed #2d7a2d;
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #fff;
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+  .env .num {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #2d7a2d;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d4e6d4;
+  }
+  .env .text {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .env .text b { color: #1e5c1e; }
+  .env .text em { color: #4a6b4a; font-size: 13px; }
+  .env.qr .num::after {
+    content: ' [QR]';
+    color: #a8862d;
+    font-size: 10px;
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">📩 КОНВЕРТЫ — ТЕКСТЫ ДЛЯ ПЕЧАТИ</div>
+<div class="page-sub">Распечатай, разрежь, сложи в зелёные конверты. Снаружи подпиши номер этапа.</div>
+
+<div class="section-title">ЭТАП 1 · ШКАФ (в спальне)</div>
+<div class="env qr">
+  <div class="num">1.1 · КОНВЕРТ В ШКАФУ</div>
+  <div class="text">
+    <b>Первый изумруд — твой, дракончик.</b><br><br>
+    Ты разгадала загадку. Ты нашла меня там, где рубашки спят в тишине.<br><br>
+    Внутри — изумруд и QR. Сканируй его — заиграет музыка, и начнётся твой путь.<br><br>
+    <em>→ Сканируй QR в этом конверте.</em>
+  </div>
+</div>
+
+<div class="section-title">ЭТАП 2 · ВАННАЯ</div>
+<div class="env">
+  <div class="num">2.1 · КОНВЕРТ НА КОМОДЕ</div>
+  <div class="text">
+    <b>Ты дошла до биома воды.</b><br><br>
+    Здесь пахнет пеной и утренним холодом. Здесь живёт таз —<br>
+    он стоит в углу и ждёт, когда в него что-то нальют.<br><br>
+    <em>→ Ищи таз. На его дне — QR.</em>
+  </div>
+</div>
+
+<div class="section-title">ЭТАП 3 · КУХНЯ (деревня)</div>
+<div class="env qr">
+  <div class="num">3.1 · КОНВЕРТ НА СТОЛЕ</div>
+  <div class="text">
+    <b>Добро пожаловать в деревню, викинг.</b><br><br>
+    Сладкое тебе сейчас нельзя — поэтому варим не медовуху, а <b>настой викинга</b>.<br><br>
+    На столе: лимон, мята, корица, имбирь, горячая вода.<br><br>
+    Сканируй QR в этом конверте — там рецепт. Внизу увидишь кнопку <b>ПОВЫСИТЬ ХП</b>. Нажми её, когда сваришь напиток. Она покажет, где искать дальше.<br><br>
+    <em>→ Сканируй QR в этом конверте.</em>
+  </div>
+</div>
+
+<div class="section-title">ЭТАП 4 · ОФИС (Древняя Русь)</div>
+<div class="env qr">
+  <div class="num">4.1 · КОНВЕРТ НА СТОЛЕ У ПК</div>
+  <div class="text">
+    <b>Ты в землях, где поют былины.</b><br><br>
+    Тут стоит терем, а в нём спрятан твой последний изумруд. Но не всё так просто:<br><br>
+    <b>Вход в это убежище стережёт вонючее чудовище, которое кусается словно тысяча собак.</b><br><br>
+    Не буди его зря. Подкрадись тихо. Найди убежище и загляни внутрь.<br><br>
+    <em>→ Найди домик. Загляни внутрь.</em>
+  </div>
+</div>
+<div class="env qr">
+  <div class="num">4.2 · КОНВЕРТ ВНУТРИ ДОМИКА</div>
+  <div class="text">
+    <b>Ты справилась. Чудовище спит.</b><br><br>
+    Последний изумруд — твой.<br><br>
+    Дальше — иди к книге. <b>«Где око видит, что вы начали вместе быстро, но до сих пор не закончили.»</b><br><br>
+    Она на полке. Там, где вы её оставили.<br><br>
+    <em>→ Ищи книгу. Внутри — конверт.</em>
+  </div>
+</div>
+
+<div class="section-title">ЭТАП 5 · КНИГА</div>
+<div class="env qr">
+  <div class="num">5.1 · КОНВЕРТ В КНИГЕ</div>
+  <div class="text">
+    <b>Ты нашла книгу. Ты нашла меня.</b><br><br>
+    Это последняя страница квеста. Здесь — шифр и путь к подарку.<br><br>
+    <b>Шифр:</b><br>
+    1. Выложи изумруды в порядке даты (день и месяц твоего рождения).<br>
+    2. Отними от каждой буквы её цифру (А=1, Б=2, … Я=33).<br>
+    3. Получишь слово. Оно скажет, где подарок.<br><br>
+    Сканируй QR ниже — там подсказка, если запутаешься.<br><br>
+    <em>→ Сканируй QR. Потом ищи подарок.</em>
+  </div>
+</div>
+
+<div class="section-title">ЭТАП 6 · ФИНАЛ (рядом с подарком)</div>
+<div class="env">
+  <div class="num">6.1 · ПОСЛЕДНИЙ КОНВЕРТ</div>
+  <div class="text" style="font-size:18px; text-align:center; padding:8px 0;">
+    <b>Я люблю тебя!</b><br>
+    <b>С днём рождения, Дракончик!</b>
+  </div>
+</div>
+
+</body>
+</html>
