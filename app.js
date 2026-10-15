@@ -1,16 +1,108 @@
 /* ============================================
-   Зелёный Биом — приложение
+   Зелёный Биом — приложение (v2, Яндекс.Музыка)
    ============================================ */
 
-// ---------- КОНФИГ (заполни своими YouTube ID) ----------
+// ============================================================
+//  НАСТРОЙКА МУЗЫКИ
+//  Вставь обычные ссылки из Яндекс.Музыки — приложение само
+//  превратит их в iframe-embed.
+//
+//  Как получить ссылку:
+//  1. Открой трек в Яндекс.Музыке
+//  2. Три точки → Поделиться → Скопировать ссылку
+//  3. Вставь сюда
+//
+//  Форматы, которые понимает приложение:
+//   • https://music.yandex.ru/album/1234567/track/8901234
+//   • https://music.yandex.ru/track/8901234
+//   • https://music.yandex.ru/album/1234567
+//   • https://music.yandex.ru/users/user/playlists/1234
+// ============================================================
+
 const MUSIC = {
-  baza:             '=wPRO-pPOQ1U&list=RDwPRO-pPOQ1U&start_radio=1',
-  sweden:           '=aBkTkxKDduc&list=RDaBkTkxKDduc&start_radio=1',
-  ariaMath:         '=atgjKEgSqSU&list=RDatgjKEgSqSU&start_radio=1',
-  subwooferLullaby: '=Gpd85y_iTxY&list=RDGpd85y_iTxY&start_radio=1'
+  // Sqwoz Bab — BAZA
+  baza: 'https://music.yandex.ru/album/36104524/track/137904480?utm_source=web&utm_medium=copy_link',
+
+  // C418 — Sweden
+  sweden: 'https://music.yandex.ru/album/39791459/track/146310631?utm_source=web&utm_medium=copy_link',
+
+  // Нейромонах Феофан — Пляс
+  ariaMath: 'https://music.yandex.ru/album/3347333/track/28038563?utm_source=web&utm_medium=copy_link',
+
+  // C418 — Subwoofer Lullaby
+  subwooferLullaby: 'https://music.yandex.ru/album/39791459/track/146310605?utm_source=web&utm_medium=copy_link'
 };
 
-// ---------- ИЗУМРУДЫ ----------
+// ---------- ПРЕОБРАЗОВАНИЕ ССЫЛОК ЯНДЕКС.МУЗЫКИ ----------
+function toYandexIframe(url) {
+  if (!url || url.startsWith('REPLACE_')) {
+    return null;
+  }
+
+  // Уже iframe — вернуть как есть
+  if (url.includes('/iframe/')) return url;
+
+  // album/{albumId}/track/{trackId}
+  let m = url.match(/album\/(\d+)\/track\/(\d+)/);
+  if (m) return `https://music.yandex.ru/iframe/#track/${m[2]}/${m[1]}`;
+
+  // track/{trackId}
+  m = url.match(/\/track\/(\d+)/);
+  if (m) return `https://music.yandex.ru/iframe/#track/${m[1]}`;
+
+  // users/{user}/playlists/{kind}
+  m = url.match(/users\/([^/]+)\/playlists\/(\d+)/);
+  if (m) return `https://music.yandex.ru/iframe/#playlist/${m[1]}/${m[2]}`;
+
+  // album/{albumId}
+  m = url.match(/\/album\/(\d+)/);
+  if (m) return `https://music.yandex.ru/iframe/#album/${m[1]}`;
+
+  // Не распознали — вернуть как есть (может сработать)
+  return url;
+}
+
+function normalizeYandexLink(url) {
+  // Убираем ?si=... и прочие хвосты
+  if (!url) return url;
+  return url.split('?')[0].split('&')[0];
+}
+
+function renderMusicPlayer(link, title) {
+  const clean = normalizeYandexLink(link);
+  const embed = toYandexIframe(clean);
+
+  if (!embed) {
+    return `
+      <div class="card">
+        <h2>🎵 Музыка не настроена</h2>
+        <p class="muted small">Открой app.js и вставь ссылку на Яндекс.Музыку вместо <code>REPLACE_...</code></p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card">
+      <h2>🎵 ${title || 'Слушай'}</h2>
+      <iframe
+        class="ym-player"
+        src="${embed}"
+        frameborder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+        style="width:100%; height:180px; border-radius:12px; background:#000; display:block;">
+      </iframe>
+      <p class="muted small" style="margin-top:10px;">
+        Если плеер не виден — открой
+        <a href="${clean}" target="_blank" rel="noopener" style="color:var(--emerald);">трек в Яндекс.Музыке</a>.
+      </p>
+    </div>
+  `;
+}
+
+// ============================================================
+//  ИЗУМРУДЫ
+// ============================================================
 const EMERALDS = [
   { id: 1, stage: 'Спальня', digit: '2', letter: 'П' },
   { id: 2, stage: 'Ванная',  digit: '5', letter: 'О' },
@@ -18,10 +110,30 @@ const EMERALDS = [
   { id: 4, stage: 'Офис',    digit: '0', letter: 'А' }
 ];
 
-// ---------- ДЕЙСТВИЯ ПО QR ----------
+// ============================================================
+//  ДЕЙСТВИЯ ПО QR
+// ============================================================
 const QR_ACTIONS = {
 
-  // ЭТАП 2 · ВАННАЯ
+  // ---------- СТАРТ ----------
+  'START': {
+    stage: 'green',
+    badge: '🟢 СТАРТ',
+    title: 'Добро пожаловать',
+    subtitle: 'Ты в новом мире',
+    emerald: { id: 1 },
+    render: (el) => {
+      el.innerHTML = `
+        <div class="card">
+          <p><b>Ты заспавнилась в новом мире.</b></p>
+          <p>Правила: 4 биома, 4 изумруда, один подарок.</p>
+          <p>Первый изумруд — в шкафу, на моей стороне, среди моих вещей. Ищи его. 🎁</p>
+        </div>
+      `;
+    }
+  },
+
+  // ---------- ЭТАП 2 · ВАННАЯ ----------
   'BATH_MUSIC': {
     stage: 'water',
     badge: '🔵 БИОМ ВОДЫ',
@@ -30,14 +142,8 @@ const QR_ACTIONS = {
     emerald: null,
     render: (el) => {
       el.innerHTML = `
+        ${renderMusicPlayer(MUSIC.baza, 'Sqwoz Bab')}
         <div class="card">
-          <div class="yt-wrap">
-            <iframe src="https://www.youtube.com/embed/${MUSIC.baza}?autoplay=1&mute=0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-          <p class="muted small">Если видео не играет — нажми ▶ на плеере или открой в YouTube.</p>
-          <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
           <p><b>Что делают мужики в этой песне?</b></p>
           <p>Найди это в ванной. И посмотри внимательно — где-то рядом спрятан конверт.</p>
           <button class="hint-link" onclick="toggleHint('hint-bath')">нужна подсказка?</button>
@@ -73,11 +179,12 @@ const QR_ACTIONS = {
           </div>
         </div>
       `;
-      document.getElementById('dance-btn').addEventListener('click', startDance);
+      const btn = document.getElementById('dance-btn');
+      if (btn) btn.addEventListener('click', startDance);
     }
   },
 
-  // ЭТАП 3 · КУХНЯ
+  // ---------- ЭТАП 3 · КУХНЯ ----------
   'KITCHEN_MUSIC': {
     stage: 'sand',
     badge: '🟡 ДЕРЕВНЯ',
@@ -86,17 +193,10 @@ const QR_ACTIONS = {
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        <div class="card">
-          <div class="yt-wrap">
-            <iframe src="https://www.youtube.com/embed/${MUSIC.sweden}?autoplay=1&mute=0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-        </div>
+        ${renderMusicPlayer(MUSIC.sweden, 'C418 — Sweden')}
         <div class="card">
           <h2>⚔️ Задание викинга</h2>
-          <p>Найди на столе рецепт медовухи. Отсканируй QR на рецепте — там инструкция.</p>
-          <p class="muted small">Или сразу смотри рецепт, если он рядом.</p>
+          <p>Найди на столе рецепт медовухи. Или открой следующее действие — там всё есть.</p>
         </div>
       `;
     }
@@ -136,7 +236,7 @@ const QR_ACTIONS = {
     }
   },
 
-  // ЭТАП 4 · ОФИС
+  // ---------- ЭТАП 4 · ОФИС ----------
   'OFFICE_MUSIC': {
     stage: 'cosmic',
     badge: '🟣 КОСМОС',
@@ -145,13 +245,7 @@ const QR_ACTIONS = {
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        <div class="card">
-          <div class="yt-wrap">
-            <iframe src="https://www.youtube.com/embed/${MUSIC.ariaMath}?autoplay=1&mute=0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-        </div>
+        ${renderMusicPlayer(MUSIC.ariaMath, 'C418 — Aria Math')}
         <div class="card">
           <h2>🐈 Кот Марс</h2>
           <p>Здесь живёт единственное живое существо на орбите — <b>кот Марс</b>.</p>
@@ -183,7 +277,7 @@ const QR_ACTIONS = {
     }
   },
 
-  // ФИНАЛ
+  // ---------- ФИНАЛ ----------
   'FINAL': {
     stage: 'green',
     badge: '🟢 ФИНАЛ',
@@ -204,18 +298,17 @@ const QR_ACTIONS = {
     }
   },
 
-  // СТАРТ
-  'START': {
+  // Бонус: отдельный QR со стартовой песней
+  'START_MUSIC': {
     stage: 'green',
     badge: '🟢 СТАРТ',
-    title: 'Добро пожаловать',
-    subtitle: 'Ты в новом мире',
-    emerald: { id: 1 },
+    title: 'Твой саундтрек',
+    subtitle: 'Subwoofer Lullaby',
+    emerald: null,
     render: (el) => {
       el.innerHTML = `
+        ${renderMusicPlayer(MUSIC.subwooferLullaby, 'C418 — Subwoofer Lullaby')}
         <div class="card">
-          <p><b>Ты заспавнилась в новом мире.</b></p>
-          <p>Правила: 4 биома, 4 изумруда, один подарок.</p>
           <p>Первый изумруд — в шкафу, на моей стороне, среди моих вещей. Ищи его. 🎁</p>
         </div>
       `;
@@ -223,7 +316,9 @@ const QR_ACTIONS = {
   }
 };
 
-// ---------- ПРИЯТНЫЕ ПОЖЕЛАНИЯ ----------
+// ============================================================
+//  ПРИЯТНЫЕ ПОЖЕЛАНИЯ
+// ============================================================
 const WISHES = [
   'Ты — мой самый любимый биом. Даже если бы вокруг были только пустоши.',
   'Я бы прошёл с тобой и Вальхейм, и Майнкрафт, и любую другую игру. Лишь бы с тобой.',
@@ -247,7 +342,9 @@ const WISHES = [
   'Люблю тебя больше, чем любой винил. И это, знаешь, много.'
 ];
 
-// ---------- СОСТОЯНИЕ ----------
+// ============================================================
+//  СОСТОЯНИЕ
+// ============================================================
 const state = {
   found: loadFound(),
   currentAction: null,
@@ -270,7 +367,8 @@ function saveFound() {
 // ---------- НАВИГАЦИЯ ----------
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -290,7 +388,8 @@ function renderEmeralds() {
   }).join('');
 
   const count = Object.values(state.found).filter(Boolean).length;
-  document.getElementById('found-count').textContent = count;
+  const countEl = document.getElementById('found-count');
+  if (countEl) countEl.textContent = count;
 
   const hints = [
     'Сканируй QR-коды или отмечай изумруды вручную.',
@@ -326,10 +425,11 @@ function markEmerald(id) {
 // ---------- SCANNER ----------
 function openScanner() {
   showView('view-scanner');
-  document.getElementById('scan-error').textContent = '';
+  const errEl = document.getElementById('scan-error');
+  if (errEl) errEl.textContent = '';
 
   if (typeof Html5Qrcode === 'undefined') {
-    document.getElementById('scan-error').textContent = 'Библиотека сканера не загружена. Проверь интернет.';
+    if (errEl) errEl.textContent = 'Библиотека сканера не загружена. Проверь интернет.';
     return;
   }
 
@@ -343,10 +443,10 @@ function openScanner() {
       closeScanner();
       handleQRContent(decodedText.trim());
     },
-    (err) => { /* ignore */ }
+    () => {}
   ).catch(err => {
     console.error(err);
-    document.getElementById('scan-error').textContent =
+    if (errEl) errEl.textContent =
       'Не удалось открыть камеру. Разреши доступ к камере в браузере.';
   });
 }
@@ -362,14 +462,15 @@ function closeScanner() {
 }
 
 function handleQRContent(text) {
-  const action = QR_ACTIONS[text.toUpperCase().trim()];
+  const key = text.toUpperCase().trim();
+  const action = QR_ACTIONS[key];
 
   if (!action) {
     toast(`Неизвестный QR: ${text.substring(0, 30)}`);
     return;
   }
 
-  showAction(text.toUpperCase().trim(), action);
+  showAction(key, action);
 }
 
 // ---------- ACTION ----------
@@ -379,32 +480,35 @@ function showAction(key, action) {
   const titleEl = document.getElementById('action-title');
   const bodyEl = document.getElementById('action-body');
 
-  titleEl.textContent = action.title;
+  if (titleEl) titleEl.textContent = action.title;
 
-  bodyEl.className = 'stage-' + action.stage;
-  bodyEl.innerHTML = `
-    <div class="action-hero">
-      <span class="badge">${action.badge}</span>
-      <h2>${action.title}</h2>
-      <p>${action.subtitle}</p>
-    </div>
-    <div id="action-content"></div>
-  `;
+  if (bodyEl) {
+    bodyEl.className = 'stage-' + action.stage;
+    bodyEl.innerHTML = `
+      <div class="action-hero">
+        <span class="badge">${action.badge}</span>
+        <h2>${action.title}</h2>
+        <p>${action.subtitle}</p>
+      </div>
+      <div id="action-content"></div>
+    `;
 
-  action.render(document.getElementById('action-content'));
+    const contentEl = document.getElementById('action-content');
+    if (contentEl) action.render(contentEl);
 
-  // Если у действия есть изумруд — отметить
-  if (action.emerald && action.emerald.id) {
-    const emerald = EMERALDS.find(e => e.id === action.emerald.id);
-    if (emerald) {
-      const reward = document.createElement('div');
-      reward.className = 'reward';
-      reward.innerHTML = `
-        <div class="gem-mini"></div>
-        <div class="reward-text">Изумруд ${emerald.digit}${emerald.letter} отмечен</div>
-      `;
-      document.getElementById('action-content').appendChild(reward);
-      markEmerald(action.emerald.id);
+    // Если у действия есть изумруд — отметить
+    if (action.emerald && action.emerald.id) {
+      const emerald = EMERALDS.find(e => e.id === action.emerald.id);
+      if (emerald && contentEl) {
+        const reward = document.createElement('div');
+        reward.className = 'reward';
+        reward.innerHTML = `
+          <div class="gem-mini"></div>
+          <div class="reward-text">Изумруд ${emerald.digit}${emerald.letter} отмечен</div>
+        `;
+        contentEl.appendChild(reward);
+        markEmerald(action.emerald.id);
+      }
     }
   }
 
@@ -465,7 +569,8 @@ function showWish() {
   } while (idx === lastWishIndex && WISHES.length > 1);
   lastWishIndex = idx;
 
-  document.getElementById('wish-text').textContent = WISHES[idx];
+  const el = document.getElementById('wish-text');
+  if (el) el.textContent = WISHES[idx];
   showView('view-wish');
 }
 
@@ -476,6 +581,7 @@ function closeWish() {
 // ---------- MANUAL ----------
 function openManual() {
   const list = document.getElementById('manual-list');
+  if (!list) return;
   list.innerHTML = Object.keys(QR_ACTIONS).map(key => {
     const a = QR_ACTIONS[key];
     return `
@@ -505,6 +611,7 @@ function resetProgress() {
 let toastTimer = null;
 function toast(msg) {
   const el = document.getElementById('toast');
+  if (!el) return;
   el.textContent = msg;
   el.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
@@ -517,5 +624,5 @@ window.addEventListener('load', () => {
   showView('view-home');
 });
 
-// PWA: не даём скроллиться body, если что-то пошло не так
+// Отключаем случайный zoom на iOS
 document.addEventListener('gesturestart', e => e.preventDefault());
