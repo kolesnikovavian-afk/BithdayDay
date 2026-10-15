@@ -1,100 +1,56 @@
 /* ============================================
-   Зелёный Биом — приложение (v2, Яндекс.Музыка)
+   Зелёный Биом — приложение (v3, Яндекс.Музыка)
    ============================================ */
 
 // ============================================================
 //  НАСТРОЙКА МУЗЫКИ
-//  Вставь обычные ссылки из Яндекс.Музыки — приложение само
-//  превратит их в iframe-embed.
-//
-//  Как получить ссылку:
-//  1. Открой трек в Яндекс.Музыке
-//  2. Три точки → Поделиться → Скопировать ссылку
-//  3. Вставь сюда
-//
-//  Форматы, которые понимает приложение:
-//   • https://music.yandex.ru/album/1234567/track/8901234
-//   • https://music.yandex.ru/track/8901234
-//   • https://music.yandex.ru/album/1234567
-//   • https://music.yandex.ru/users/user/playlists/1234
+//  Вставь обычные ссылки из Яндекс.Музыки.
+//  Приложение покажет красивую кнопку "Слушать" — она откроет
+//  трек в приложении Яндекс.Музыки (надёжнее, чем iframe).
 // ============================================================
 
 const MUSIC = {
   // Sqwoz Bab — BAZA
-  baza: 'https://music.yandex.ru/album/36104524/track/137904480?utm_source=web&utm_medium=copy_link',
+  baza: 'https://music.yandex.ru/album/36104524/track/137904480',
 
   // C418 — Sweden
-  sweden: 'https://music.yandex.ru/album/39791459/track/146310631?utm_source=web&utm_medium=copy_link',
+  sweden: 'https://music.yandex.ru/album/39791459/track/146310631',
 
   // Нейромонах Феофан — Пляс
-  ariaMath: 'https://music.yandex.ru/album/3347333/track/28038563?utm_source=web&utm_medium=copy_link',
+  ariaMath: 'https://music.yandex.ru/album/3347333/track/28038563',
 
   // C418 — Subwoofer Lullaby
-  subwooferLullaby: 'https://music.yandex.ru/album/39791459/track/146310605?utm_source=web&utm_medium=copy_link'
+  subwooferLullaby: 'https://music.yandex.ru/album/39791459/track/146310605'
 };
 
-// ---------- ПРЕОБРАЗОВАНИЕ ССЫЛОК ЯНДЕКС.МУЗЫКИ ----------
-function toYandexIframe(url) {
+// -------- Плеер: большая кнопка вместо iframe --------
+// Yandex iframe часто не работает (треки запрещены для встраивания).
+// Поэтому делаем надёжную ссылку-кнопку — она откроет трек в приложении.
+function renderMusicPlayer(url, title) {
   if (!url || url.startsWith('REPLACE_')) {
-    return null;
-  }
-
-  // Уже iframe — вернуть как есть
-  if (url.includes('/iframe/')) return url;
-
-  // album/{albumId}/track/{trackId}
-  let m = url.match(/album\/(\d+)\/track\/(\d+)/);
-  if (m) return `https://music.yandex.ru/iframe/#track/${m[2]}/${m[1]}`;
-
-  // track/{trackId}
-  m = url.match(/\/track\/(\d+)/);
-  if (m) return `https://music.yandex.ru/iframe/#track/${m[1]}`;
-
-  // users/{user}/playlists/{kind}
-  m = url.match(/users\/([^/]+)\/playlists\/(\d+)/);
-  if (m) return `https://music.yandex.ru/iframe/#playlist/${m[1]}/${m[2]}`;
-
-  // album/{albumId}
-  m = url.match(/\/album\/(\d+)/);
-  if (m) return `https://music.yandex.ru/iframe/#album/${m[1]}`;
-
-  // Не распознали — вернуть как есть (может сработать)
-  return url;
-}
-
-function normalizeYandexLink(url) {
-  // Убираем ?si=... и прочие хвосты
-  if (!url) return url;
-  return url.split('?')[0].split('&')[0];
-}
-
-function renderMusicPlayer(link, title) {
-  const clean = normalizeYandexLink(link);
-  const embed = toYandexIframe(clean);
-
-  if (!embed) {
     return `
       <div class="card">
         <h2>🎵 Музыка не настроена</h2>
-        <p class="muted small">Открой app.js и вставь ссылку на Яндекс.Музыку вместо <code>REPLACE_...</code></p>
+        <p class="muted small">Открой app.js и вставь ссылку на Яндекс.Музыку.</p>
       </div>
     `;
   }
 
+  const clean = url.split('?')[0];
+
   return `
-    <div class="card">
-      <h2>🎵 ${title || 'Слушай'}</h2>
-      <iframe
-        class="ym-player"
-        src="${embed}"
-        frameborder="0"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-        style="width:100%; height:180px; border-radius:12px; background:#000; display:block;">
-      </iframe>
-      <p class="muted small" style="margin-top:10px;">
-        Если плеер не виден — открой
-        <a href="${clean}" target="_blank" rel="noopener" style="color:var(--emerald);">трек в Яндекс.Музыке</a>.
+    <div class="card music-card">
+      <div class="music-icon">🎵</div>
+      <h2 style="text-align:center;">${title}</h2>
+      <p class="muted small" style="text-align:center; margin-bottom:18px;">
+        Нажми — трек откроется в приложении Яндекс.Музыки
+      </p>
+      <a href="${clean}" target="_blank" rel="noopener" class="btn primary big music-btn">
+        <span class="btn-icon">▶</span>
+        Слушать трек
+      </a>
+      <p class="muted small" style="text-align:center; margin-top:12px;">
+        Если не открывается — <a href="${clean}" style="color:var(--emerald);">прямая ссылка</a>.
       </p>
     </div>
   `;
@@ -115,12 +71,8 @@ const EMERALDS = [
 // ============================================================
 const QR_ACTIONS = {
 
-  // ---------- СТАРТ ----------
   'START': {
-    stage: 'green',
-    badge: '🟢 СТАРТ',
-    title: 'Добро пожаловать',
-    subtitle: 'Ты в новом мире',
+    stage: 'green', badge: '🟢 СТАРТ', title: 'Добро пожаловать', subtitle: 'Ты в новом мире',
     emerald: { id: 1 },
     render: (el) => {
       el.innerHTML = `
@@ -135,14 +87,11 @@ const QR_ACTIONS = {
 
   // ---------- ЭТАП 2 · ВАННАЯ ----------
   'BATH_MUSIC': {
-    stage: 'water',
-    badge: '🔵 БИОМ ВОДЫ',
-    title: 'Послушай песню',
-    subtitle: 'Ответ спрятан в тексте',
+    stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Послушай песню', subtitle: 'Ответ спрятан в тексте',
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        ${renderMusicPlayer(MUSIC.baza, 'Sqwoz Bab')}
+        ${renderMusicPlayer(MUSIC.baza, 'Sqwoz Bab — BAZA')}
         <div class="card">
           <p><b>Что делают мужики в этой песне?</b></p>
           <p>Найди это в ванной. И посмотри внимательно — где-то рядом спрятан конверт.</p>
@@ -154,10 +103,7 @@ const QR_ACTIONS = {
   },
 
   'BATH_DANCE': {
-    stage: 'water',
-    badge: '🔵 БИОМ ВОДЫ',
-    title: 'Танцуй тазом',
-    subtitle: '10 секунд',
+    stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Танцуй тазом', subtitle: '10 секунд',
     emerald: { id: 2 },
     render: (el) => {
       el.innerHTML = `
@@ -186,10 +132,7 @@ const QR_ACTIONS = {
 
   // ---------- ЭТАП 3 · КУХНЯ ----------
   'KITCHEN_MUSIC': {
-    stage: 'sand',
-    badge: '🟡 ДЕРЕВНЯ',
-    title: 'Подкрепиться',
-    subtitle: 'Фоновая музыка',
+    stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Подкрепиться', subtitle: 'Фоновая музыка',
     emerald: null,
     render: (el) => {
       el.innerHTML = `
@@ -203,10 +146,7 @@ const QR_ACTIONS = {
   },
 
   'KITCHEN_RECIPE': {
-    stage: 'sand',
-    badge: '🟡 ДЕРЕВНЯ',
-    title: 'Рецепт медовухи',
-    subtitle: 'За викингов!',
+    stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Рецепт медовухи', subtitle: 'За викингов!',
     emerald: { id: 3 },
     render: (el) => {
       el.innerHTML = `
@@ -238,14 +178,11 @@ const QR_ACTIONS = {
 
   // ---------- ЭТАП 4 · ОФИС ----------
   'OFFICE_MUSIC': {
-    stage: 'cosmic',
-    badge: '🟣 КОСМОС',
-    title: 'Холодная пустота',
-    subtitle: 'Aria Math',
+    stage: 'cosmic', badge: '🟣 КОСМОС', title: 'Холодная пустота', subtitle: 'Фоновая музыка',
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        ${renderMusicPlayer(MUSIC.ariaMath, 'C418 — Aria Math')}
+        ${renderMusicPlayer(MUSIC.ariaMath, 'Нейромонах Феофан — Пляс')}
         <div class="card">
           <h2>🐈 Кот Марс</h2>
           <p>Здесь живёт единственное живое существо на орбите — <b>кот Марс</b>.</p>
@@ -256,10 +193,7 @@ const QR_ACTIONS = {
   },
 
   'OFFICE_HINT': {
-    stage: 'cosmic',
-    badge: '🟣 КОСМОС',
-    title: 'Домик Марса',
-    subtitle: 'Забери своё',
+    stage: 'cosmic', badge: '🟣 КОСМОС', title: 'Домик Марса', subtitle: 'Забери своё',
     emerald: { id: 4 },
     render: (el) => {
       el.innerHTML = `
@@ -279,10 +213,7 @@ const QR_ACTIONS = {
 
   // ---------- ФИНАЛ ----------
   'FINAL': {
-    stage: 'green',
-    badge: '🟢 ФИНАЛ',
-    title: 'Пора',
-    subtitle: 'Ты прошла все биомы',
+    stage: 'green', badge: '🟢 ФИНАЛ', title: 'Пора', subtitle: 'Ты прошла все биомы',
     emerald: null,
     render: (el) => {
       el.innerHTML = `
@@ -298,12 +229,8 @@ const QR_ACTIONS = {
     }
   },
 
-  // Бонус: отдельный QR со стартовой песней
   'START_MUSIC': {
-    stage: 'green',
-    badge: '🟢 СТАРТ',
-    title: 'Твой саундтрек',
-    subtitle: 'Subwoofer Lullaby',
+    stage: 'green', badge: '🟢 СТАРТ', title: 'Твой саундтрек', subtitle: 'Subwoofer Lullaby',
     emerald: null,
     render: (el) => {
       el.innerHTML = `
@@ -403,10 +330,7 @@ function renderEmeralds() {
 }
 
 function toggleEmerald(id) {
-  if (state.found[id]) {
-    toast('Уже найден ✨');
-    return;
-  }
+  if (state.found[id]) { toast('Уже найден ✨'); return; }
   state.found[id] = true;
   saveFound();
   renderEmeralds();
@@ -439,24 +363,17 @@ function openScanner() {
   scanner.start(
     { facingMode: 'environment' },
     { fps: 10, qrbox: { width: 250, height: 250 } },
-    (decodedText) => {
-      closeScanner();
-      handleQRContent(decodedText.trim());
-    },
+    (decodedText) => { closeScanner(); handleQRContent(decodedText.trim()); },
     () => {}
   ).catch(err => {
     console.error(err);
-    if (errEl) errEl.textContent =
-      'Не удалось открыть камеру. Разреши доступ к камере в браузере.';
+    if (errEl) errEl.textContent = 'Не удалось открыть камеру. Разреши доступ к камере.';
   });
 }
 
 function closeScanner() {
   if (state.scanner) {
-    state.scanner.stop().then(() => {
-      state.scanner.clear();
-      state.scanner = null;
-    }).catch(() => {});
+    state.scanner.stop().then(() => { state.scanner.clear(); state.scanner = null; }).catch(() => {});
   }
   showView('view-home');
 }
@@ -464,22 +381,15 @@ function closeScanner() {
 function handleQRContent(text) {
   const key = text.toUpperCase().trim();
   const action = QR_ACTIONS[key];
-
-  if (!action) {
-    toast(`Неизвестный QR: ${text.substring(0, 30)}`);
-    return;
-  }
-
+  if (!action) { toast(`Неизвестный QR: ${text.substring(0, 30)}`); return; }
   showAction(key, action);
 }
 
 // ---------- ACTION ----------
 function showAction(key, action) {
   state.currentAction = { key, action };
-
   const titleEl = document.getElementById('action-title');
   const bodyEl = document.getElementById('action-body');
-
   if (titleEl) titleEl.textContent = action.title;
 
   if (bodyEl) {
@@ -492,11 +402,9 @@ function showAction(key, action) {
       </div>
       <div id="action-content"></div>
     `;
-
     const contentEl = document.getElementById('action-content');
     if (contentEl) action.render(contentEl);
 
-    // Если у действия есть изумруд — отметить
     if (action.emerald && action.emerald.id) {
       const emerald = EMERALDS.find(e => e.id === action.emerald.id);
       if (emerald && contentEl) {
@@ -511,30 +419,23 @@ function showAction(key, action) {
       }
     }
   }
-
   showView('view-action');
 }
 
-function closeAction() {
-  showView('view-home');
-}
+function closeAction() { showView('view-home'); }
 
 // ---------- DANCE TIMER ----------
 function startDance() {
   if (state.danceInterval) return;
-
   const display = document.getElementById('timer');
   const btn = document.getElementById('dance-btn');
   if (!display || !btn) return;
-
   let seconds = 10;
   display.classList.remove('idle', 'done');
   btn.disabled = true;
   btn.textContent = 'ТАНЦУЙ!';
   btn.style.opacity = '0.6';
-
   display.textContent = seconds;
-
   state.danceInterval = setInterval(() => {
     seconds--;
     if (seconds <= 0) {
@@ -544,13 +445,8 @@ function startDance() {
       display.classList.add('done');
       btn.textContent = 'ГОТОВО';
       const result = document.getElementById('dance-result');
-      if (result) {
-        result.style.display = 'block';
-        setTimeout(() => result.scrollIntoView({ behavior: 'smooth' }), 300);
-      }
-    } else {
-      display.textContent = seconds;
-    }
+      if (result) { result.style.display = 'block'; setTimeout(() => result.scrollIntoView({ behavior: 'smooth' }), 300); }
+    } else { display.textContent = seconds; }
   }, 1000);
 }
 
@@ -564,19 +460,13 @@ function toggleHint(id) {
 let lastWishIndex = -1;
 function showWish() {
   let idx;
-  do {
-    idx = Math.floor(Math.random() * WISHES.length);
-  } while (idx === lastWishIndex && WISHES.length > 1);
+  do { idx = Math.floor(Math.random() * WISHES.length); } while (idx === lastWishIndex && WISHES.length > 1);
   lastWishIndex = idx;
-
   const el = document.getElementById('wish-text');
   if (el) el.textContent = WISHES[idx];
   showView('view-wish');
 }
-
-function closeWish() {
-  showView('view-home');
-}
+function closeWish() { showView('view-home'); }
 
 // ---------- MANUAL ----------
 function openManual() {
@@ -593,14 +483,11 @@ function openManual() {
   }).join('');
   showView('view-manual');
 }
-
-function closeManual() {
-  showView('view-home');
-}
+function closeManual() { showView('view-home'); }
 
 // ---------- RESET ----------
 function resetProgress() {
-  if (!confirm('Сбросить прогресс? Все изумруды снова будут не найдены.')) return;
+  if (!confirm('Сбросить прогресс?')) return;
   state.found = {};
   saveFound();
   renderEmeralds();
@@ -623,6 +510,4 @@ window.addEventListener('load', () => {
   renderEmeralds();
   showView('view-home');
 });
-
-// Отключаем случайный zoom на iOS
 document.addEventListener('gesturestart', e => e.preventDefault());
