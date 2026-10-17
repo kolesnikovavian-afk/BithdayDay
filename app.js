@@ -1,14 +1,21 @@
 /* ============================================
-   Зелёный Биом — приложение (v4.4)
+   Зелёный Биом — приложение (v4.5)
    ============================================ */
 
+// ============================================================
+//  МУЗЫКА (ссылки на Яндекс.Музыку)
+// ============================================================
 const MUSIC = {
-  wardrobe: 'https://music.yandex.ru/album/39791459/track/146310605',
-  kitchen:  'https://music.yandex.ru/album/6543454/track/48037874',
-  office:   'https://music.yandex.ru/album/3347333/track/28038563',
-  book:     'https://music.yandex.ru/album/22515176/track/597351'
+  wardrobe: 'https://music.yandex.ru/album/39791459/track/146310605', // C418 — Subwoofer Lullaby
+  baza:     'https://music.yandex.ru/album/36104524/track/137904480', // Sqwoz Bab — BAZA (для ванной)
+  kitchen:  'https://music.yandex.ru/album/6543454/track/48037874',   // ВуншПунш
+  office:   'https://music.yandex.ru/album/3347333/track/28038563',   // Нейромонах Феофан — Пляс
+  book:     'https://music.yandex.ru/album/22515176/track/597351'     // Чиж & Co — О любви
 };
 
+// ============================================================
+//  ИЗУМРУДЫ (4 шт, дата 25.10, буквы ПОРА)
+// ============================================================
 const EMERALDS = [
   { id: 1, stage: 'Шкаф',    digit: '2', letter: 'П' },
   { id: 2, stage: 'Ванная',  digit: '5', letter: 'О' },
@@ -16,6 +23,9 @@ const EMERALDS = [
   { id: 4, stage: 'Домик',   digit: '0', letter: 'А' }
 ];
 
+// ============================================================
+//  ЗАДАНИЯ ПО ЭТАПАМ
+// ============================================================
 const TASKS = [
   `📜 <b>Задание 1</b><br><br>
    Где рубашки спят в тишине,<br>
@@ -41,7 +51,12 @@ const TASKS = [
    <span class="muted small">Если не помнишь, где конверт — вернись в комнату с компьютером.</span>`
 ];
 
+// ============================================================
+//  ДЕЙСТВИЯ ПО QR
+// ============================================================
 const QR_ACTIONS = {
+
+  // -------- ЭТАП 1 · ШКАФ --------
   'WARDROBE': {
     stage: 'green', badge: '🟢 БИОМ ЛЕСА', title: 'Первый изумруд', subtitle: 'Ты нашла его',
     emerald: { id: 1 },
@@ -56,6 +71,23 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 2 · ВАННАЯ (Музыка) --------
+  'BATH_MUSIC': {
+    stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Пенная вечеринка', subtitle: 'Включи музыку',
+    emerald: null,
+    render: (el) => {
+      el.innerHTML = `
+        ${renderMusicPlayer(MUSIC.baza, 'Sqwoz Bab — BAZA')}
+        <div class="card">
+          <p><b>Этот предмет есть и в ванной, и в играющей песне.</b></p>
+          <p>Найди его. Внутри — следующий шаг.</p>
+        </div>
+      `;
+    }
+  },
+
+  // -------- ЭТАП 2 · ВАННАЯ (Танец) --------
   'BATH_DANCE': {
     stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Танцуй тазом', subtitle: '10 секунд',
     emerald: { id: 2 },
@@ -78,6 +110,8 @@ const QR_ACTIONS = {
       if (btn) btn.addEventListener('click', startDance);
     }
   },
+
+  // -------- ЭТАП 3 · КУХНЯ --------
   'KITCHEN_MUSIC': {
     stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Подкрепиться', subtitle: 'Фоновая музыка',
     emerald: null,
@@ -92,6 +126,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'KITCHEN_RECIPE': {
     stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Напиток викинга', subtitle: 'Без сахара — но вкусно',
     emerald: { id: 3 },
@@ -130,6 +165,8 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 4 · ОФИС --------
   'OFFICE_MUSIC': {
     stage: 'rus', badge: '🪵 ДРЕВНЯЯ РУСЬ', title: 'Былина', subtitle: 'Фоновая музыка',
     emerald: null,
@@ -144,6 +181,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'CAT_HOUSE': {
     stage: 'rus', badge: '🪵 ДРЕВНЯЯ РУСЬ', title: 'Логово чудовища', subtitle: 'Ты справилась',
     emerald: { id: 4 },
@@ -164,6 +202,8 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 5 · КНИГА --------
   'BOOK_SONG': {
     stage: 'green', badge: '🟢 ФИНАЛ', title: 'Последний шифр', subtitle: 'Играет песня',
     emerald: null,
@@ -189,6 +229,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'FINAL': {
     stage: 'green', badge: '🟢 ФИНАЛ', title: 'Ты дошла', subtitle: 'Я люблю тебя',
     emerald: null,
@@ -207,6 +248,9 @@ const QR_ACTIONS = {
   }
 };
 
+// ============================================================
+//  ПЛЕЕР
+// ============================================================
 function renderMusicPlayer(url, title) {
   if (!url) return '';
   const clean = url.split('?')[0];
@@ -225,6 +269,9 @@ function renderMusicPlayer(url, title) {
   `;
 }
 
+// ============================================================
+//  РАНДОМАЙЗЕР ПОЖЕЛАНИЙ
+// ============================================================
 const WISHES = [
   'Ты моя любимая ящерка. С тобой даже в пустошах Майнкрафта тепло.',
   'Дракончик, ты как Фенрис — снаружи колючая, а внутри самая преданная.',
@@ -252,12 +299,15 @@ const WISHES = [
   'Люблю тебя больше, чем любой винил. И это, знаешь, много.'
 ];
 
+// ============================================================
+//  СОСТОЯНИЕ
+// ============================================================
 const state = {
   found: loadFound(),
   started: loadStarted(),
   currentAction: null,
   scanner: null,
-  danceInterval: null
+  danceTimeout: null
 };
 
 function loadFound() {
@@ -275,6 +325,9 @@ function saveStarted() {
   try { localStorage.setItem('biome_started', 'true'); } catch (e) {}
 }
 
+// ============================================================
+//  НАВИГАЦИЯ
+// ============================================================
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById(id);
@@ -282,7 +335,6 @@ function showView(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// НОВАЯ ФУНКЦИЯ: Открывает музыку и запускает квест
 function startQuestWithMusic() {
   if (MUSIC.wardrobe) {
     window.open(MUSIC.wardrobe.split('?')[0], '_blank');
@@ -297,6 +349,9 @@ function startQuest() {
   showView('view-home');
 }
 
+// ============================================================
+//  ИЗУМРУДЫ
+// ============================================================
 function renderEmeralds() {
   const grid = document.getElementById('emerald-grid');
   if (!grid) return;
@@ -347,6 +402,9 @@ function markEmerald(id) {
   }
 }
 
+// ============================================================
+//  СКАНЕР
+// ============================================================
 function openScanner() {
   showView('view-scanner');
   const errEl = document.getElementById('scan-error');
@@ -385,6 +443,9 @@ function handleQRContent(text) {
   showAction(key, action);
 }
 
+// ============================================================
+//  ACTION
+// ============================================================
 function showAction(key, action) {
   state.currentAction = { key, action };
   const titleEl = document.getElementById('action-title');
@@ -423,12 +484,16 @@ function showAction(key, action) {
 
 function closeAction() { showView('view-home'); }
 
+// ============================================================
+//  ТАЙМЕР ТАНЦА (ИСПРАВЛЕННЫЙ)
+// ============================================================
 function startDance() {
-  if (state.danceInterval) return;
+  if (state.danceTimeout) return;
   const display = document.getElementById('timer');
   const btn = document.getElementById('dance-btn');
   if (!display || !btn) return;
 
+  // Сначала 10,9,8, потом рандомные 46,47,48, банан, потом 3,2,1, потом дробные
   const sequence = [10, 9, 8, 46, 47, 48, 'банан', 3, 2, 1];
   for (let i = 94; i >= 1; i--) {
     sequence.push((i / 100).toFixed(2));
@@ -442,33 +507,42 @@ function startDance() {
   btn.textContent = 'ТАНЦУЙ!';
   btn.style.opacity = '0.6';
 
-  display.textContent = sequence[0];
-
-  state.danceInterval = setInterval(() => {
-    idx++;
+  function tick() {
     if (idx >= sequence.length) {
-      clearInterval(state.danceInterval);
-      state.danceInterval = null;
       display.textContent = '🎉';
       display.classList.add('done');
       btn.textContent = 'ГОТОВО';
       const result = document.getElementById('dance-result');
       if (result) { result.style.display = 'block'; setTimeout(() => result.scrollIntoView({ behavior: 'smooth' }), 300); }
-    } else {
-      display.textContent = sequence[idx];
-      if (idx > 9) {
-        clearInterval(state.danceInterval);
-        state.danceInterval = setInterval(arguments.callee, 50); 
-      }
+      return;
     }
-  }, 1000);
+
+    display.textContent = sequence[idx];
+    idx++;
+
+    // Задержка 1 секунда для первых чисел, и ускорение для дробей (50 мс)
+    let delay = 1000;
+    if (idx > 10) {
+      delay = 50; 
+    }
+
+    state.danceTimeout = setTimeout(tick, delay);
+  }
+
+  tick();
 }
 
+// ============================================================
+//  HINTS
+// ============================================================
 function toggleHint(id) {
   const el = document.getElementById(id);
   if (el) el.classList.toggle('show');
 }
 
+// ============================================================
+//  WISH
+// ============================================================
 let lastWishIndex = -1;
 function showWish() {
   let idx;
@@ -480,6 +554,9 @@ function showWish() {
 }
 function closeWish() { showView('view-home'); }
 
+// ============================================================
+//  MANUAL
+// ============================================================
 function openManual() {
   const list = document.getElementById('manual-list');
   if (!list) return;
@@ -496,6 +573,9 @@ function openManual() {
 }
 function closeManual() { showView('view-home'); }
 
+// ============================================================
+//  RESET
+// ============================================================
 function resetProgress() {
   if (!confirm('Сбросить ВЕСЬ прогресс и вернуться на стартовый экран?')) return;
   localStorage.removeItem('biome_found');
@@ -507,6 +587,9 @@ function resetProgress() {
   toast('Полный сброс выполнен');
 }
 
+// ============================================================
+//  TOAST
+// ============================================================
 let toastTimer = null;
 function toast(msg) {
   const el = document.getElementById('toast');
@@ -517,8 +600,10 @@ function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
+// ============================================================
+//  INIT
+// ============================================================
 window.addEventListener('load', () => {
-  // Убрали привязку ссылки к кнопке, так как теперь это <button> с onclick
   if (state.started) {
     renderEmeralds();
     showView('view-home');
