@@ -65,18 +65,24 @@
     color: #a8862d;
     font-size: 10px;
   }
+  .qr-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+  }
   .qr-box {
-    width: 100px;
+    flex: 1;
     height: 100px;
     border: 1px dashed #2d7a2d;
     border-radius: 6px;
-    margin: 10px auto 0;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Courier New', monospace;
     font-size: 10px;
     color: #2d7a2d;
+    text-align: center;
+    padding: 4px;
   }
   @media print {
     body { background: #fff; padding: 0; }
@@ -95,7 +101,10 @@
     <b>Первый изумруд — твой, дракончик.</b><br><br>
     Ты разгадала загадку. Ты нашла меня там, где рубашки спят в тишине.<br><br>
     Внутри — изумруд и QR. Сканируй его — заиграет музыка, и начнётся твой путь.<br><br>
-    Пока играет песня, иди в комнату, где кафель холоднее утренних мыслей. На комоде тебя ждёт конверт.
+    Пока играет песня, иди в комнату, где кафель холоднее утренних мыслей. На комоде тебя ждёт конверт.<br><br>
+    <div class="qr-row">
+      <div class="qr-box">[QR WARDROBE]</div>
+    </div>
   </div>
 </div>
 
@@ -104,10 +113,12 @@
   <div class="num">2.1 · КОНВЕРТ НА КОМОДЕ</div>
   <div class="text">
     <b>Здесь пахнет пеной и утренней прохладой. Поэтому давай немного разогреем это место и устроим пенную вечеринку!</b><br><br>
-    А чтобы было веселее, включи музыку по QR-коду ниже.<br><br>
+    Для начала включи музыку — сканируй первый QR-код.<br><br>
     А пока играет — разгадай загадку: <b>«Этот предмет есть и в ванной, и в играющей песне»</b>.<br><br>
     Найди его. Внутри — следующий шаг.<br><br>
-    <div class="qr-box">[QR на BAZA]</div>
+    <div class="qr-row">
+      <div class="qr-box">[QR BATH_MUSIC]</div>
+    </div>
   </div>
 </div>
 
@@ -119,19 +130,23 @@
     Сладкое тебе сейчас нельзя — поэтому варим не медовуху, а <b>настой викинга</b>.<br><br>
     На столе: лимон, мята, корица, имбирь, горячая вода.<br><br>
     Сканируй QR в этом конверте — там рецепт. Внизу увидишь кнопку <b>ПОВЫСИТЬ ХП</b>. Нажми её, когда сваришь напиток. Она покажет, где искать дальше.<br><br>
-    <div class="qr-box">[QR на рецепт]</div>
+    <div class="qr-row">
+      <div class="qr-box">[QR KITCHEN_RECIPE]</div>
+    </div>
   </div>
 </div>
 
 <div class="section-title">ЭТАП 4 · ОФИС (Древняя Русь)</div>
-<div class="env">
+<div class="env qr">
   <div class="num">4.1 · КОНВЕРТ НА СТОЛЕ У ПК</div>
   <div class="text">
     <b>Ты в землях, где поют былины.</b><br><br>
     Тут стоит терем, а в нём спрятан твой последний изумруд. Но не всё так просто:<br><br>
     <b>Вход в это убежище стережёт вонючее чудовище, которое кусается словно тысяча собак.</b><br><br>
     Не буди его зря. Подкрадись тихо. Найди убежище и загляни внутрь.<br><br>
-    <div class="qr-box">[QR OFFICE_MUSIC]</div>
+    <div class="qr-row">
+      <div class="qr-box">[QR OFFICE_MUSIC]</div>
+    </div>
   </div>
 </div>
 <div class="env qr">
@@ -140,7 +155,9 @@
     <b>Ты справилась. Чудовище спит.</b><br><br>
     Последний изумруд — твой.<br><br>
     Дальше — иди туда, где <b>«Где око видит, что вы начали вместе быстро, но до сих пор не закончили.»</b><br><br>
-    <div class="qr-box">[QR на книгу]</div>
+    <div class="qr-row">
+      <div class="qr-box">[QR CAT_HOUSE]</div>
+    </div>
   </div>
 </div>
 
@@ -155,7 +172,9 @@
     2. Отними от каждой буквы её цифру (А=1, Б=2, … Я=33).<br>
     3. Получишь слово. Оно скажет, где подарок.<br><br>
     Сканируй QR ниже — там подсказка, если запутаешься.<br><br>
-    <div class="qr-box">[QR BOOK_SONG]</div>
+    <div class="qr-row">
+      <div class="qr-box">[QR BOOK_SONG]</div>
+    </div>
   </div>
 </div>
 
