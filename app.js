@@ -1,5 +1,5 @@
 /* ============================================
-   Зелёный Биом — приложение (v4.1)
+   Зелёный Биом — приложение (v4.2)
    ============================================ */
 
 // ============================================================
@@ -7,9 +7,9 @@
 // ============================================================
 const MUSIC = {
   wardrobe: 'https://music.yandex.ru/album/39791459/track/146310605', // C418 — Subwoofer Lullaby
-  kitchen:  'https://music.yandex.ru/album/39791459/track/146310631', // C418 — Sweden
+  kitchen:  'https://music.yandex.ru/album/6543454/track/48037874',   // ВуншПунш
   office:   'https://music.yandex.ru/album/3347333/track/28038563',   // Нейромонах Феофан — Пляс
-  book:     'https://music.yandex.ru/album/36104524/track/137904480'  // Sqwoz Bab — BAZA
+  book:     'https://music.yandex.ru/album/22515176/track/597351'     // Чиж & Co — О любви
 };
 
 // ============================================================
@@ -52,7 +52,7 @@ const TASKS = [
   `📜 <b>Финал</b><br><br>
    Все изумруды собраны!<br>
    В последнем конверте — шифр и путь к подарку.<br><br>
-   <span class="muted small">Если не помнишь, где конверт — вернись в комнату с компьютером, затем найди книгу.</span>`
+   <span class="muted small">Если не помнишь, где конверт — вернись в комнату с компьютером.</span>`
 ];
 
 // ============================================================
@@ -66,7 +66,6 @@ const QR_ACTIONS = {
     emerald: { id: 1 },
     render: (el) => {
       el.innerHTML = `
-        ${renderMusicPlayer(MUSIC.wardrobe, 'C418 — Subwoofer Lullaby')}
         <div class="card">
           <p>Первый изумруд — твой. Пока играет песня, иди в комнату, где кафель холоднее утренних мыслей.</p>
           <p>На комоде тебя ждёт конверт. Прочитай его, а потом найди то, что стоит в углу и ждёт, когда в него что-то нальют.</p>
@@ -84,7 +83,7 @@ const QR_ACTIONS = {
     render: (el) => {
       el.innerHTML = `
         <div class="card">
-          <p>Танцуй тазом. Ровно 10 секунд. Это часть квеста. 😄</p>
+          <p>А теперь давай подвигаем тазом как в песне. Танцуй пока не истечет таймер! 😈</p>
           <div class="timer-display idle" id="timer">10</div>
           <button class="btn primary big" id="dance-btn">НАЧАТЬ ТАНЕЦ</button>
         </div>
@@ -93,8 +92,6 @@ const QR_ACTIONS = {
             <h2 style="color:var(--emerald);">🎉 МОЛОДЕЦ!</h2>
             <p>Ты оттанцевала. Теперь — в деревню.</p>
             <p>Там пахнет едой и травами. QR на двери включит музыку. На столе — конверт с заданием. Внутри — что-то вкусное.</p>
-            <button class="hint-link" onclick="toggleHint('hint-bath-next')">подсказка?</button>
-            <div class="hidden-hint" id="hint-bath-next">Кухня. На столе конверт. Сканируй QR внутри.</div>
           </div>
         </div>
       `;
@@ -109,7 +106,7 @@ const QR_ACTIONS = {
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        ${renderMusicPlayer(MUSIC.kitchen, 'C418 — Sweden')}
+        ${renderMusicPlayer(MUSIC.kitchen, 'ВуншПунш — Песня')}
         <div class="card">
           <h2>⚔️ Задание викинга</h2>
           <p>На столе лежит конверт. В нём — рецепт и QR.</p>
@@ -201,7 +198,7 @@ const QR_ACTIONS = {
     emerald: null,
     render: (el) => {
       el.innerHTML = `
-        ${renderMusicPlayer(MUSIC.book, 'Финальная песня')}
+        ${renderMusicPlayer(MUSIC.book, 'Чиж & Co — О любви')}
         <div class="card">
           <h2>🔐 Шифр</h2>
           <p>В конверте — инструкция. В приложении — шифр. Соедини их.</p>
@@ -470,22 +467,35 @@ function showAction(key, action) {
 function closeAction() { showView('view-home'); }
 
 // ============================================================
-//  ТАЙМЕР ТАНЦА
+//  ТАЙМЕР ТАНЦА (С ЛОВУШКОЙ)
 // ============================================================
 function startDance() {
   if (state.danceInterval) return;
   const display = document.getElementById('timer');
   const btn = document.getElementById('dance-btn');
   if (!display || !btn) return;
-  let seconds = 10;
+
+  // Последовательность чисел для ловушки
+  const sequence = [10, 9, 8, 46, 47, 48, 'банан', 3, 2, 1];
+  // Добавляем дробные от 0.94 до 0.01 (пропускаем некоторые для скорости)
+  for (let i = 94; i >= 1; i--) {
+    sequence.push((i / 100).toFixed(2));
+  }
+  sequence.push(0);
+
+  let idx = 0;
+  
   display.classList.remove('idle', 'done');
   btn.disabled = true;
   btn.textContent = 'ТАНЦУЙ!';
   btn.style.opacity = '0.6';
-  display.textContent = seconds;
+
+  // Устанавливаем первое значение
+  display.textContent = sequence[0];
+
   state.danceInterval = setInterval(() => {
-    seconds--;
-    if (seconds <= 0) {
+    idx++;
+    if (idx >= sequence.length) {
       clearInterval(state.danceInterval);
       state.danceInterval = null;
       display.textContent = '🎉';
@@ -493,8 +503,16 @@ function startDance() {
       btn.textContent = 'ГОТОВО';
       const result = document.getElementById('dance-result');
       if (result) { result.style.display = 'block'; setTimeout(() => result.scrollIntoView({ behavior: 'smooth' }), 300); }
-    } else { display.textContent = seconds; }
-  }, 1000);
+    } else {
+      display.textContent = sequence[idx];
+      // Ускоряем дробную часть
+      if (idx > 9) {
+        // Перезапускаем интервал с меньшей задержкой
+        clearInterval(state.danceInterval);
+        state.danceInterval = setInterval(arguments.callee, 50); 
+      }
+    }
+  }, 1000); // 1 секунда для целых чисел
 }
 
 // ============================================================
@@ -566,7 +584,6 @@ function toast(msg) {
 //  INIT
 // ============================================================
 window.addEventListener('load', () => {
-  // Подставляем ссылку на lullaby в кнопку на стартовом экране
   const startBtn = document.getElementById('start-music-btn');
   if (startBtn && MUSIC.wardrobe) {
     startBtn.href = MUSIC.wardrobe.split('?')[0];
