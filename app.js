@@ -1,15 +1,21 @@
 /* ============================================
-   Зелёный Биом — приложение (v4.6)
+   Зелёный Биом — приложение (v4.7)
    ============================================ */
 
+// ============================================================
+//  МУЗЫКА (ссылки на Яндекс.Музыку)
+// ============================================================
 const MUSIC = {
   wardrobe: 'https://music.yandex.ru/album/39791459/track/146310605', // C418 — Subwoofer Lullaby
-  baza:     'https://music.yandex.ru/album/36104524/track/137904480', // Sqwoz Bab — BAZA (для ванной)
+  baza:     'https://music.yandex.ru/album/36104524/track/137904480', // Sqwoz Bab — BAZA
   kitchen:  'https://music.yandex.ru/album/6543454/track/48037874',   // ВуншПунш
   office:   'https://music.yandex.ru/album/3347333/track/28038563',   // Нейромонах Феофан — Пляс
   book:     'https://music.yandex.ru/album/22515176/track/597351'     // Чиж & Co — О любви
 };
 
+// ============================================================
+//  ИЗУМРУДЫ (4 шт, дата 25.10, буквы ПОРА)
+// ============================================================
 const EMERALDS = [
   { id: 1, stage: 'Шкаф',    digit: '2', letter: 'П' },
   { id: 2, stage: 'Ванная',  digit: '5', letter: 'О' },
@@ -17,6 +23,9 @@ const EMERALDS = [
   { id: 4, stage: 'Домик',   digit: '0', letter: 'А' }
 ];
 
+// ============================================================
+//  ЗАДАНИЯ ПО ЭТАПАМ
+// ============================================================
 const TASKS = [
   `📜 <b>Задание 1</b><br><br>
    Где рубашки спят в тишине,<br>
@@ -42,7 +51,12 @@ const TASKS = [
    <span class="muted small">Если не помнишь, где конверт — вернись в комнату с компьютером.</span>`
 ];
 
+// ============================================================
+//  ДЕЙСТВИЯ ПО QR
+// ============================================================
 const QR_ACTIONS = {
+
+  // -------- ЭТАП 1 · ШКАФ --------
   'WARDROBE': {
     stage: 'green', badge: '🟢 БИОМ ЛЕСА', title: 'Первый изумруд', subtitle: 'Ты нашла его',
     emerald: { id: 1 },
@@ -57,6 +71,8 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 2 · ВАННАЯ --------
   'BATH_MUSIC': {
     stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Пенная вечеринка', subtitle: 'Включи музыку',
     emerald: null,
@@ -70,6 +86,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'BATH_DANCE': {
     stage: 'water', badge: '🔵 БИОМ ВОДЫ', title: 'Танцуй тазом', subtitle: '10 секунд',
     emerald: { id: 2 },
@@ -92,6 +109,8 @@ const QR_ACTIONS = {
       if (btn) btn.addEventListener('click', startDance);
     }
   },
+
+  // -------- ЭТАП 3 · КУХНЯ --------
   'KITCHEN_MUSIC': {
     stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Подкрепиться', subtitle: 'Фоновая музыка',
     emerald: null,
@@ -106,6 +125,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'KITCHEN_RECIPE': {
     stage: 'sand', badge: '🟡 ДЕРЕВНЯ', title: 'Напиток викинга', subtitle: 'Без сахара — но вкусно',
     emerald: { id: 3 },
@@ -144,6 +164,8 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 4 · ОФИС --------
   'OFFICE_MUSIC': {
     stage: 'rus', badge: '🪵 ДРЕВНЯЯ РУСЬ', title: 'Былина', subtitle: 'Фоновая музыка',
     emerald: null,
@@ -158,6 +180,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'CAT_HOUSE': {
     stage: 'rus', badge: '🪵 ДРЕВНЯЯ РУСЬ', title: 'Логово чудовища', subtitle: 'Ты справилась',
     emerald: { id: 4 },
@@ -178,6 +201,8 @@ const QR_ACTIONS = {
       `;
     }
   },
+
+  // -------- ЭТАП 5 · КНИГА --------
   'BOOK_SONG': {
     stage: 'green', badge: '🟢 ФИНАЛ', title: 'Последний шифр', subtitle: 'Играет песня',
     emerald: null,
@@ -203,6 +228,7 @@ const QR_ACTIONS = {
       `;
     }
   },
+
   'FINAL': {
     stage: 'green', badge: '🟢 ФИНАЛ', title: 'Ты дошла', subtitle: 'Я люблю тебя',
     emerald: null,
@@ -221,6 +247,9 @@ const QR_ACTIONS = {
   }
 };
 
+// ============================================================
+//  ПЛЕЕР
+// ============================================================
 function renderMusicPlayer(url, title) {
   if (!url) return '';
   const clean = url.split('?')[0];
@@ -239,6 +268,9 @@ function renderMusicPlayer(url, title) {
   `;
 }
 
+// ============================================================
+//  РАНДОМАЙЗЕР ПОЖЕЛАНИЙ
+// ============================================================
 const WISHES = [
   'Ты моя любимая ящерка. С тобой даже в пустошах Майнкрафта тепло.',
   'Дракончик, ты как Фенрис — снаружи колючая, а внутри самая преданная.',
@@ -289,6 +321,9 @@ function saveStarted() {
   try { localStorage.setItem('biome_started', 'true'); } catch (e) {}
 }
 
+// ============================================================
+//  НАВИГАЦИЯ
+// ============================================================
 function showView(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const target = document.getElementById(id);
@@ -310,6 +345,9 @@ function startQuest() {
   showView('view-home');
 }
 
+// ============================================================
+//  ИЗУМРУДЫ
+// ============================================================
 function renderEmeralds() {
   const grid = document.getElementById('emerald-grid');
   if (!grid) return;
@@ -360,6 +398,9 @@ function markEmerald(id) {
   }
 }
 
+// ============================================================
+//  СКАНЕР
+// ============================================================
 function openScanner() {
   showView('view-scanner');
   const errEl = document.getElementById('scan-error');
@@ -392,21 +433,23 @@ function closeScanner() {
 }
 
 // ============================================================
-// ОБНОВЛЕННАЯ ФУНКЦИЯ ОБРАБОТКИ QR
+//  ОБРАБОТКА QR
 // ============================================================
 function handleQRContent(text) {
-  const trimmed = text.trim();
-  const key = trimmed.toUpperCase();
-  const action = QR_ACTIONS[key];
+  // Очищаем строку от любых скрытых символов, пробелов и переносов строк
+  const cleanText = text.trim().replace(/[\n\r\t]/g, '');
+  
+  // 1. Проверяем текстовые ключи (BATH_MUSIC, WARDROBE и т.д.)
+  const cleanKey = cleanText.toUpperCase().replace(/[^A-Z_]/g, ''); // Оставляем только буквы и _
+  const action = QR_ACTIONS[cleanKey];
 
-  // 1. Если это наш ключ (WARDROBE, BATH_DANCE и т.д.)
   if (action) {
-    showAction(key, action);
+    showAction(cleanKey, action);
     return;
   }
 
   // 2. Если отсканировали прямую ссылку на Яндекс.Музыку
-  if (trimmed.includes('music.yandex.ru')) {
+  if (cleanText.includes('music.yandex.ru')) {
     showAction('EXTERNAL_MUSIC', {
       stage: 'green',
       badge: '🎵 МУЗЫКА',
@@ -414,7 +457,7 @@ function handleQRContent(text) {
       subtitle: 'Ссылка из QR',
       render: (el) => {
         el.innerHTML = `
-          ${renderMusicPlayer(trimmed, 'Трек из QR')}
+          ${renderMusicPlayer(cleanText, 'Трек из QR')}
           <div class="card">
             <p>Нажми кнопку выше, чтобы включить музыку. Затем возвращайся к квесту.</p>
           </div>
@@ -425,14 +468,14 @@ function handleQRContent(text) {
   }
 
   // 3. Если просто внешняя ссылка
-  if (trimmed.startsWith('http')) {
-    window.open(trimmed, '_blank');
+  if (cleanText.startsWith('http')) {
+    window.open(cleanText, '_blank');
     toast('Открываю ссылку...');
     return;
   }
 
   // 4. Неизвестный формат
-  toast(`Неизвестный QR: ${trimmed.substring(0, 30)}`);
+  toast(`Неизвестный QR: ${cleanText.substring(0, 20)}`);
 }
 
 function showAction(key, action) {
@@ -473,6 +516,9 @@ function showAction(key, action) {
 
 function closeAction() { showView('view-home'); }
 
+// ============================================================
+//  ТАЙМЕР ТАНЦА
+// ============================================================
 function startDance() {
   if (state.danceTimeout) return;
   const display = document.getElementById('timer');
